@@ -8,7 +8,7 @@ def handle_events():
     global dir
     global c_x, c_y
     global s_x=[]
-    global s_x=[]
+    global s_y=[]
     global i
 
     events=get_events()
