@@ -3,6 +3,8 @@ import game_framework
 import random
 import title_state
 
+image=''
+
 class Grass:
     def __init__(self):
         self.image = load_image('grass.png')
@@ -12,18 +14,23 @@ class Grass:
 
 class Boy:
     def __init__(self):
-        print("Creating..")
+        
         self.x = random.randint(0, 200)
         self.y = random.randint(90, 550)
         self.speed = random.uniform(1.0, 3.0)
         self.frame = random.randint(0, 7)
+        self.state=random.randint(0,3)
         self.waypoints = []
-        self.image = load_image('run_animation.png')
-        self.wp = load_image('wp.png')
+        global image
+        global wap
+        if (image==''):
+            image = load_image('animation_sheet.png')
+            wap = load_image('wp.png')
+            print("Creating..")
     def draw(self):
         for wp in self.waypoints:
-            self.wp.draw(wp[0], wp[1])
-        self.image.clip_draw(self.frame * 100, 0, 100, 100, self.x, self.y)
+            wap.draw(wp[0], wp[1])
+        image.clip_draw(self.frame * 100, self.state*100, 100, 100, self.x, self.y)
     def update(self):
         self.frame = (self.frame + 1) % 8
         if len(self.waypoints) > 0:
@@ -34,13 +41,25 @@ class Boy:
                 self.x += self.speed * dx / dist
                 self.y += self.speed * dy / dist
 
-                if dx < 0 and self.x < tx: self.x = tx
-                if dx > 0 and self.x > tx: self.x = tx
-                if dy < 0 and self.y < ty: self.y = ty
-                if dy > 0 and self.y > ty: self.y = ty
+                if dx < 0 and self.x < tx:
+                    self.x = tx
+                    self.state=2
+                if dx > 0 and self.x > tx:
+                    self.x = tx
+                    self.state=3
+                if dy < 0 and self.y < ty:
+                    self.y = ty
+                if dy > 0 and self.y > ty:
+                    self.y = ty
 
                 if (tx, ty) == (self.x, self.y):
                     del self.waypoints[0]
+        if len(self.waypoints) > 0:
+            if self.x>tx:
+                self.state=0
+            elif self.x<tx:
+                self.state=1
+        
 
 span = 50
 def handle_events():
@@ -70,7 +89,7 @@ def handle_events():
 def enter():
     global boys, grass
 
-    boys = [ Boy() for i in range(10) ]
+    boys = [ Boy() for i in range(1000) ]
     grass = Grass()
 
 
@@ -101,6 +120,9 @@ def update():
 # fill here
 
 def exit():
+    pass
+
+def main():
     pass
 
 if __name__ == '__main__':
