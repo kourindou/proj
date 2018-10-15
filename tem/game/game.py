@@ -3,6 +3,9 @@ import game_framework
 
 px=400
 py=200
+x_speed=0
+y_speed=0
+P_f=0
 
 class Enemy:
     def __init__(self):
@@ -19,26 +22,51 @@ class Player:
         global px, py
         self.image.clip_draw(self.p_ax,0,120,120,px,py)
     def move(self):
-        pass
+        global x_speed, y_speed
+        global px, py
+        px=px+x_speed
+        py=py+y_speed
+        if px>800:
+            px=800
+        elif px<0:
+            px=0
+        if py>1000:
+            py=1000
+        elif py<0:
+            py=0
 
 class P_b:
-    def __init(self):
+    def __init__(self):
         self.image=load_image('P_bullet.png')
+        self.x=0
+        self.y=0
+    def fire(self):
+        global px, py
+        global P_f
+        self.x=px
+        self.y=py+55
+        P_f=1
+    def shoot(self):
+        global P_f
+        self.image.draw(self.x,self.y)
+        self.y+=15
+        if self.y>1000:
+            P_f=0     
 
 def enter():
     global Pa
+    global Pb
+    global back
     open_canvas(800,1000)
     back=load_image('BG.png')
     back.draw(400,500)
     Pa=Player()
-    
+    Pb=P_b()
     update_canvas()
     
 def handle_events():
-    pass
-    global boys
-    global span
-    global px, py
+    global x_speed, y_speed
+    global Pb
     events = get_events()
     for e in events:
         if e.type == SDL_QUIT:
@@ -46,13 +74,44 @@ def handle_events():
         elif e.type == SDL_KEYDOWN:
             if e.key == SDLK_ESCAPE:
                 game_framework.pop_state()
+        if e.type == SDL_KEYDOWN:
+            if e.key == SDLK_RIGHT:
+                x_speed+=5
+            if e.key == SDLK_LEFT:
+                x_speed-=5
+            if e.key == SDLK_UP:
+                y_speed+=5
+            if e.key == SDLK_DOWN:
+                y_speed-=5
+            if e.key == SDLK_z:
+                Pb.fire()
+        elif e.type == SDL_KEYUP:
+            if e.key == SDLK_RIGHT:
+                x_speed-=5
+            if e.key == SDLK_LEFT:
+                x_speed+=5
+            if e.key == SDLK_UP:
+                y_speed-=5
+            if e.key == SDLK_DOWN:
+                y_speed+=5
 
 def draw():
+    clear_canvas()
     global Pa
+    global Pb
+    global back
+    global P_f
+    back.draw(400,500)
+    if P_f==1:
+        Pb.shoot()
     Pa.draw()
+    
 
 def update():
+    global Pa
+    Pa.move()
     update_canvas()
+    delay(0.03)
     pass
 
 def exit():
