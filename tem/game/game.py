@@ -5,7 +5,7 @@ px=400
 py=200
 x_speed=0
 y_speed=0
-P_f=0
+ma=0
 
 class Enemy:
     def __init__(self):
@@ -40,18 +40,19 @@ class P_b:
         self.image=load_image('P_bullet.png')
         self.x=0
         self.y=0
+        self.P_f=0
     def fire(self):
         global px, py
-        global P_f
         self.x=px
         self.y=py+55
-        P_f=1
+        self.P_f=1
     def shoot(self):
-        global P_f
-        self.image.draw(self.x,self.y)
-        self.y+=15
-        if self.y>1000:
-            P_f=0     
+        global P_bul
+        if self.P_f==1:
+            self.image.draw(self.x,self.y)
+            self.y+=15
+            if self.y>1000:
+                self.P_f=0     
 
 def enter():
     global Pa
@@ -61,12 +62,13 @@ def enter():
     back=load_image('BG.png')
     back.draw(400,500)
     Pa=Player()
-    Pb=P_b()
+    Pb=[P_b() for i in range(20)]
     update_canvas()
     
 def handle_events():
     global x_speed, y_speed
     global Pb
+    global ma
     events = get_events()
     for e in events:
         if e.type == SDL_QUIT:
@@ -84,7 +86,10 @@ def handle_events():
             if e.key == SDLK_DOWN:
                 y_speed-=5
             if e.key == SDLK_z:
-                Pb.fire()
+                Pb[ma].fire()
+                ma+=1
+                if ma>19:
+                    ma=0
         elif e.type == SDL_KEYUP:
             if e.key == SDLK_RIGHT:
                 x_speed-=5
@@ -100,10 +105,9 @@ def draw():
     global Pa
     global Pb
     global back
-    global P_f
     back.draw(400,500)
-    if P_f==1:
-        Pb.shoot()
+    for i in range(20):
+        Pb[i].shoot()
     Pa.draw()
     
 
