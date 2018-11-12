@@ -16,10 +16,13 @@ class Enemy:
     def __init__(self):
         global E_B
         self.image=load_image('EA.png')
+        self.HP=load_image("E_HP.png")
         self.e_ax=0
+        self.hp_sta=400
     def draw(self):
         global ex, ey
         self.image.clip_draw(self.e_ax,0,420,220,ex,ey)
+        self.HP.draw(self.hp_sta,950)
 
 
 class Player:
@@ -39,8 +42,8 @@ class Player:
             px=800
         elif px<0:
             px=0
-        if py>1000:
-            py=1000
+        if py>900:
+            py=900
         elif py<0:
             py=0
 
