@@ -12,17 +12,38 @@ y_speed=0
 shi=7.5
 ma=0
 
+class back:
+    def __init__(self):
+        self.q=500
+        self.w=-500
+        self.image=load_image('BG_sky.png')
+        self.imagec1=load_image('BG_cloud.png')
+        self.imagec2=load_image('BG_cloud.png')
+    def draw(self):
+        self.image.draw(400,500)
+        self.imagec1.draw(400,self.q)
+        self.imagec2.draw(400,self.w)
+    def update(self):
+        self.q+=5
+        self.w+=5
+        if self.q>1500:
+            self.q=-500
+        if self.w>1500:
+            self.w=-500
+    
 class Enemy:
     def __init__(self):
         global E_B
         self.image=load_image('EA.png')
         self.HP=load_image("E_HP.png")
+        self.HPW=load_image('E_HP_W.png')
         self.e_ax=0
         self.hp_sta=400
     def draw(self):
         global ex, ey
         self.image.clip_draw(self.e_ax,0,420,220,ex,ey)
         self.HP.draw(self.hp_sta,950)
+        self.HPW.draw(50,950)
 
 
 class Player:
@@ -93,15 +114,16 @@ class E_b:
 def enter():
     global Pa
     global Pb
-    global back
     global Ea
     global Eb
     global t, q
+    global bg
+    global start
     t=0
     q=0
+    start=time.time()
     open_canvas(800,1000)
-    back=load_image('BG.png')
-    back.draw(400,500)
+    bg=back()
     Pa=Player()
     Ea=Enemy()
     Pb=[P_b() for i in range(20)]
@@ -148,9 +170,9 @@ def draw():
     clear_canvas()
     global Pa
     global Pb
-    global back
     global Eb
-    back.draw(400,500)
+    global bg
+    bg.draw()
     for i in range(20):
         Pb[i].shoot()
     for i in range(200):
@@ -163,14 +185,19 @@ def update():
     global Pa
     global t, q
     global Eb
-    t+=1
-    if t>20:
-        for i in range(25):
-            Eb[q].normal_f()
-            q+=1
-            if q>=200:
-                q=0
-        t=0
+    global bg
+    global start
+    gt=time.time()
+    bg.update()
+    if gt-start<10:
+        t+=1
+        if t>20:
+            for i in range(25):
+                Eb[q].normal_f()
+                q+=1
+                if q>=200:
+                    q=0
+            t=0
     Pa.move()
     update_canvas()
     delay(0.03)
