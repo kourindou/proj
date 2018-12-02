@@ -10,7 +10,7 @@ def handle_events():
 def enter():
     global image
     open_canvas()
-    image=load_image("kpu_credit.png")
+    image=load_image("res/kpu_credit.png")
 
 def draw():
     clear_canvas()
