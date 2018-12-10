@@ -207,11 +207,12 @@ class E_b:
         self.p1_y=p1y
         self.p1_x=300
     def reset(self):
-        self.x=-20
-        self.y=-20
-        self.p1_x=400
-        self.p1_y=-30
-        self.E_p3=0
+        if self.x!=-20:
+            self.x=-20
+            self.y=-20
+            self.p1_x=400
+            self.p1_y=-30
+            self.E_p3=0
     def pat3_f(self, speed):
         global pat3_w
         if pat3_w==1:
@@ -424,6 +425,22 @@ class pat:
             self.on=1
             self.ts=time.time()
 
+class game_end:
+    def __init__(self):
+        self.ov_bg=load_image('res/GO_screen.png')
+        self.cl_bg=load_image('res/GC_screen.png')
+        self.ov_wr=load_image('res/GO_wr.png')
+        self.cl_wr=load_image('res/GC_wr.png')
+        self.font=load_font("res/SGALS.ttf",60)
+    def clear_draw(self):
+        self.cl_bg.draw(400,300)
+        self.cl_wr.draw(400,300)
+        self.font.draw(225,200,"score : %.2f"%score,(255,255,255))
+    def over_draw(self):
+        self.ov_bg.draw(400,300)
+        self.ov_wr.draw(400,300)
+        self.font.draw(225,200,"score : %.2f"%score,(255,255,255))
+
 def enter():
     global Pa, Pb
     global Ea, Eb
@@ -435,6 +452,10 @@ def enter():
     global che
     global x_speed, y_speed
     global pat_c
+    global hp_sta
+    global ge
+    ge=game_end()
+    hp_sta=200
     pat_c=0
     x_speed=0
     y_speed=0
@@ -479,6 +500,12 @@ def handle_events():
                 ma+=1
                 if ma>19:
                     ma=0
+            if e.key == SDLK_x:
+                for i in range(1000):
+                    Eb[i].reset()
+            if e.key == SDLK_SPACE:
+                if t_life<1:
+                    enter()
         elif e.type == SDL_KEYUP:
             if e.key == SDLK_RIGHT:
                 x_speed-=shi
@@ -490,96 +517,102 @@ def handle_events():
                 y_speed+=shi
 
 def draw():
-    clear_canvas()
-    global pat_c
-    global pato
-    bg.draw()
-    if pat_c==0:
-        for i in range(1000):
-            Eb[i].normal_s()
-            Eb[i].nh_check()
-    elif pat_c==1:
-        pato.pat1_draw()
-        for i in range(1000):
-            Eb[i].pat1_s()
-            Eb[i].p1h_check()
-    elif pat_c==2:
-        pato.pat2_draw()
-    elif pat_c==3:
-        for i in range(1000):
-            Eb[i].pat3_s()
-            Eb[i].p3h_check()
-    for i in range(20):
-        Pb[i].shoot()
-        Pb[i].h_check()
-    Ea.draw()
-    bg.draw_s()
-    Pa.draw()
-    
+    if t_life>0:
+        clear_canvas()
+        global pat_c
+        global pato
+        bg.draw()
+        if pat_c==0:
+            for i in range(1000):
+                Eb[i].normal_s()
+                Eb[i].nh_check()
+        elif pat_c==1:
+            pato.pat1_draw()
+            for i in range(1000):
+                Eb[i].pat1_s()
+                Eb[i].p1h_check()
+        elif pat_c==2:
+            pato.pat2_draw()
+        elif pat_c==3:
+            for i in range(1000):
+                Eb[i].pat3_s()
+                Eb[i].p3h_check()
+        for i in range(20):
+            Pb[i].shoot()
+            Pb[i].h_check()
+        Ea.draw()
+        bg.draw_s()
+        Pa.draw()
+    else:
+        clear_canvas()
+        ge.over_draw()
+        update_canvas()
+        delay(0.03)
     
 
 def update():
-    global t, q, w
-    global start
-    global pat_c
-    global pato
-    global che
-    global pat3_speed
-    gt=time.time()
-    bg.update()
-    pato.check()
-    if pat_c==0:
-        if che==1:
-            for i in range(1000):
-                Eb[i].reset()
-            che=0
-        t+=1
-        if t>20:
-            for i in range(23):
-                Eb[q].normal_f()
-                q+=1
-                if q>=1000:
-                    q=0
-            t=0
-    elif pat_c==1:
-        if che==0:
-            for i in range(1000):
-                Eb[i].reset()
-            che=1
-        pato.pat1_update()
-        t+=1
-        if t>20:
-            for i in range(25):
-                Eb[w].pat1_f()
-                w+=1
-                if w>=1000:
-                    w=0
-            t=0
-    elif pat_c==2:
-        if che==0:
-            Ea.pat2_set()
-            che=1
-        Ea.pat2_update()
-    elif pat_c==3:
-        if che==0:
-            pato.pat3_set()
-            for i in range(1000):
-                Eb[i].reset()
-            che=1
-        pato.pat3_che()
-        t+=1
-        if t>3:
-            for i in range(2):
-                Eb[q].pat3_f(pat3_speed)
-                q+=1
-                if q>=1000:
-                    q=0
-            t=0
-
-    Pa.move()
-    update_canvas()
-    delay(0.03)
-    pass
+    if t_life>0:
+        global t, q, w
+        global start
+        global pat_c
+        global pato
+        global che
+        global pat3_speed
+        gt=time.time()
+        bg.update()
+        pato.check()
+        if pat_c==0:
+            if che==1:
+                for i in range(1000):
+                    Eb[i].reset()
+                che=0
+            t+=1
+            if t>20:
+                for i in range(15):
+                    Eb[q].normal_f()
+                    q+=1
+                    if q>=1000:
+                        q=0
+                t=0
+        elif pat_c==1:
+            if che==0:
+                for i in range(1000):
+                    Eb[i].reset()
+                che=1
+            pato.pat1_update()
+            t+=1
+            if t>20:
+                for i in range(18):
+                    Eb[w].pat1_f()
+                    w+=1
+                    if w>=1000:
+                        w=0
+                t=0
+        elif pat_c==2:
+            if che==0:
+                Ea.pat2_set()
+                che=1
+            Ea.pat2_update()
+        elif pat_c==3:
+            if che==0:
+                pato.pat3_set()
+                for i in range(1000):
+                    Eb[i].reset()
+                che=1
+            pato.pat3_che()
+            t+=1
+            if t>5:
+                for i in range(2):
+                    Eb[q].pat3_f(pat3_speed)
+                    q+=1
+                    if q>=1000:
+                        q=0
+                t=0
+        Pa.move()
+        update_canvas()
+        delay(0.03)
+    else:
+        pass
 
 def exit():
     clear_canvas()
