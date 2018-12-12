@@ -152,11 +152,8 @@ class P_b:
         global hp_sta
         if self.P_f==1:
             if (self.x<ex+100) and (self.x>ex-100) and (self.y>ey) and (self.y<ey+50):
-                print("hit")
                 hp_sta-=self.damage
                 self.P_f=0
-                if hp_sta<=-302:
-                    print("win")
         else:
             pass
 
@@ -255,31 +252,26 @@ class E_b:
         global t_life
         if self.E_f==1:
             if (py-5<=self.y-10<py+5) and ((px-5<=self.x-10<px+5) or (px-5<self.x+10<=px+5)):
-                print("idiot")
                 self.E_f=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.y+10<=py+5) and ((px-5<=self.x-10<px+5) or (px-5<self.x+10<=px+5)):
-                print("idiot")
                 self.E_f=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<=self.y-10<py+5) and ((px-5>=self.x-10) and (self.x+10>=px+5)):
-                print("idiot")
                 self.E_f=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.y+10<=py+5) and ((px-5>self.x-10) and (self.x+10>px+5)):
-                print("idiot")
                 self.E_f=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (self.y+10>py+5) and (self.y-10<py-5) and (px-5>self.x-10) and (self.x+10>px+5):
-                print("idiot")
                 self.E_f=0
                 t_life-=1
                 if t_life<=0:
@@ -290,31 +282,26 @@ class E_b:
         global t_life
         if self.E_p1==1:
             if (py-5<=self.p1_y-10<py+5) and ((px-5<=self.p1_x-10<px+5) or (px-5<self.p1_x+10<=px+5)):
-                print("idiot")
                 self.E_p1=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.p1_y+10<=py+5) and ((px-5<=self.p1_x-10<px+5) or (px-5<self.p1_x+10<=px+5)):
-                print("idiot")
                 self.E_p1=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<=self.p1_y-10<py+5) and ((px-5>=self.p1_x-10) and (self.p1_x+10>=px+5)):
-                print("idiot")
                 self.E_p1=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.p1_y+10<=py+5) and ((px-5>self.p1_x-10) and (self.p1_x+10>px+5)):
-                print("idiot")
                 self.E_p1=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (self.p1_y+10>py+5) and (self.p1_y-10<py-5) and (px-5>self.p1_x-10) and (self.p1_x+10>px+5):
-                print("idiot")
                 self.E_p1=0
                 t_life-=1
                 if t_life<=0:
@@ -325,31 +312,26 @@ class E_b:
         global t_life
         if self.E_p3==1:
             if (py-5<=self.p3_y-10<py+5) and ((px-5<=self.p3_x-10<px+5) or (px-5<self.p3_x+10<=px+5)):
-                print("idiot")
                 self.E_p3=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.p3_y+10<=py+5) and ((px-5<=self.p3_x-10<px+5) or (px-5<self.p3_x+10<=px+5)):
-                print("idiot")
                 self.E_p3=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<=self.p3_y-10<py+5) and ((px-5>=self.p3_x-10) and (self.p3_x+10>=px+5)):
-                print("idiot")
                 self.E_p3=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (py-5<self.p3_y+10<=py+5) and ((px-5>self.p3_x-10) and (self.p3_x+10>px+5)):
-                print("idiot")
                 self.E_p3=0
                 t_life-=1
                 if t_life<=0:
                     pass
             if (self.p3_y+10>py+5) and (self.p3_y-10<py-5) and (px-5>self.p3_x-10) and (self.p3_x+10>px+5):
-                print("idiot")
                 self.E_p3=0
                 t_life-=1
                 if t_life<=0:
@@ -401,7 +383,6 @@ class pat:
                 self.on=1
                 self.ts=time.time()
         if (ex-10<px<ex+10):
-            print("noob")
             ex=300
             pat_c=0
             t_life-=1
