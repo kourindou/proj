@@ -2,6 +2,7 @@ from pico2d import *
 import game_framework
 import time
 import random
+import pickle
 import title_state
 
 
@@ -50,7 +51,7 @@ class back:
 class Enemy:
     def __init__(self):
         global E_B
-        self.image=load_image('res/EA_s.png')
+        self.image=load_image('res/EA.png')
         self.HP=load_image("res/E_HP.png")
         self.HPW=load_image('res/E_HP_W.png')
         self.e_ax=0
@@ -80,7 +81,7 @@ class Enemy:
 class Player:
     def __init__(self):
         global t_life
-        self.image=load_image('res/PA_s.png')
+        self.image=load_image('res/PA.png')
         self.p_ax=0
         self.life=load_image('res/P_life.png')
         self.life1=load_image('res/P_life.png')
@@ -89,7 +90,7 @@ class Player:
         self.point=load_image('res/p_point.png')
     def draw(self):
         global px, py
-        self.image.clip_draw(self.p_ax,0,99,70,px,py)
+        self.image.clip_draw(self.p_ax,0,49,58,px,py)
         self.point.draw(px,py)
         if t_life==3:
             self.life.draw(650,30)
@@ -100,6 +101,9 @@ class Player:
             self.life1.draw(730,30)
         if t_life==1:
             self.life.draw(700,30)
+        self.p_ax+=49
+        if self.p_ax>196:
+            self.p_ax=0
     def move(self):
         global x_speed, y_speed
         global px, py
@@ -121,11 +125,18 @@ class P_b:
         self.x=-20
         self.y=0
         self.P_f=0
+        self.sound=load_wav('res/shoot.wav')
+        self.sound.set_volume(32)
+        if title_state.op==0:
+            self.damage=3
+        else:
+            self.damage=100
     def fire(self):
         global px, py
         self.x=px
         self.y=py+55
         self.P_f=1
+        self.sound.play()
     def shoot(self):
         global P_bul
         if self.P_f==1:
@@ -142,7 +153,7 @@ class P_b:
         if self.P_f==1:
             if (self.x<ex+100) and (self.x>ex-100) and (self.y>ey) and (self.y<ey+50):
                 print("hit")
-                hp_sta-=3
+                hp_sta-=self.damage
                 self.P_f=0
                 if hp_sta<=-302:
                     print("win")
@@ -150,6 +161,7 @@ class P_b:
             pass
 
 class E_b:
+    image=''
     def __init__(self):
         self.x=-20
         self.y=-20
@@ -161,7 +173,8 @@ class E_b:
         self.p1_xm=10
         self.p1_ym=10
         self.E_p1=0
-        self.image=load_image('res/E_bullet.png')
+        if E_b.image=='':
+            E_b.image=load_image('res/E_bullet.png')
         self.E_p2=0
         self.E_p3=0
         self.p3_x, self.p3_y=830, 500
@@ -175,7 +188,7 @@ class E_b:
         self.deg=random.randint(-100,100)
     def normal_s(self):
         if self.E_f==1:
-            self.image.draw(self.x,self.y)
+            E_b.image.draw(self.x,self.y)
             self.x+=self.deg*(0.1)
             self.y-=self.speed
             if (self.y<0) or (self.x>600) or (self.x<0):
@@ -186,7 +199,7 @@ class E_b:
                 self.y=-20
     def pat1_s(self):
         if self.E_p1==1:
-            self.image.draw(self.p1_x, self.p1_y)
+            E_b.image.draw(self.p1_x, self.p1_y)
             self.p1_x+=self.p1_xm
             self.p1_y+=self.p1_ym
             if (self.p1_x>600)or(self.p1_x<0)or(self.p1_y>600)or(self.p1_y<0):
@@ -227,7 +240,7 @@ class E_b:
         self.E_p3=1
     def pat3_s(self):
         if self.E_p3==1:
-            self.image.draw(self.p3_x, self.p3_y)
+            E_b.image.draw(self.p3_x, self.p3_y)
             self.p3_x+=self.p3_xm
             self.p3_y-=self.p3_ym
             if (self.p3_x<0) or (self.p3_x>600):
@@ -425,6 +438,24 @@ class pat:
             self.on=1
             self.ts=time.time()
 
+class highscore:
+    def __init__(self):
+        self.scores=0.00
+        self.fonts=load_font("res/SGALS.ttf",30)
+    def load(self):
+        global Highscore
+        with open('res/Highscore.pickle','rb') as f:
+            Highscore=pickle.load(f)
+        if Highscore<score:
+            self.scores=Highscore
+            self.fonts.draw(270,100,"Highscore : %.2f"%Highscore,(255,255,255))
+        else:
+            self.scores=score
+            self.fonts.draw(270,100,"Highscore : %.2f"%score,(255,255,255))
+    def save(self):
+        with open('res/Highscore.pickle','wb') as f:
+            pickle.dump(self.scores,f)
+
 class game_end:
     def __init__(self):
         self.ov_bg=load_image('res/GO_screen.png')
@@ -436,10 +467,14 @@ class game_end:
         self.cl_bg.draw(400,300)
         self.cl_wr.draw(400,300)
         self.font.draw(225,200,"score : %.2f"%score,(255,255,255))
+        hs.load()
+        hs.save()
     def over_draw(self):
         self.ov_bg.draw(400,300)
         self.ov_wr.draw(400,300)
-        self.font.draw(225,200,"score : %.2f"%score,(255,255,255))
+        self.font.draw(70,200,"press space to restart",(255,255,255))
+        
+        
 
 def enter():
     global Pa, Pb
@@ -454,6 +489,8 @@ def enter():
     global pat_c
     global hp_sta
     global ge
+    global hs
+    hs=highscore()
     ge=game_end()
     hp_sta=200
     pat_c=0
@@ -517,7 +554,7 @@ def handle_events():
                 y_speed+=shi
 
 def draw():
-    if t_life>0:
+    if (t_life>0) and (hp_sta>-302):
         clear_canvas()
         global pat_c
         global pato
@@ -543,15 +580,20 @@ def draw():
         Ea.draw()
         bg.draw_s()
         Pa.draw()
-    else:
+    elif (t_life<=0) and (hp_sta>-302):
         clear_canvas()
         ge.over_draw()
+        update_canvas()
+        delay(0.03)
+    elif (t_life>0) and (hp_sta<=-302):
+        clear_canvas()
+        ge.clear_draw()
         update_canvas()
         delay(0.03)
     
 
 def update():
-    if t_life>0:
+    if (t_life>0) and (hp_sta>-302):
         global t, q, w
         global start
         global pat_c

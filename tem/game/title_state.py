@@ -2,11 +2,12 @@ from pico2d import *
 import game_framework
 import game
 
-global life
 life=3
+op=0
+ch=0
 
 def handle_events():
-    global life
+    global life, ch, op
     events=get_events()
     for e in events:
         if e.type == SDL_QUIT:
@@ -26,6 +27,14 @@ def handle_events():
                     life=3
                 else:
                     life-=1
+            if e.key==SDLK_s:
+                ch+=1
+                if ch>15:
+                    ch=0
+                    op=1
+                    print("op on")
+                else:
+                    op=0
 
 def enter():
     global image
