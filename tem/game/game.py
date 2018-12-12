@@ -518,9 +518,6 @@ def handle_events():
                 ma+=1
                 if ma>19:
                     ma=0
-            if e.key == SDLK_x:
-                for i in range(1000):
-                    Eb[i].reset()
             if e.key == SDLK_SPACE:
                 if t_life<1:
                     enter()
