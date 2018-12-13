@@ -73,9 +73,9 @@ class Enemy:
     def pat2_update(self):
         global ex, pat2_w
         if pat2_w==1:
-            ex+=9.5
+            ex+=10.5
         elif pat2_w==2:
-            ex-=9.5
+            ex-=10.5
 
 
 class Player:
